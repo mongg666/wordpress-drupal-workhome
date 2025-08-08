@@ -1,0 +1,39 @@
+---
+- name: Install SQLite for WordPress
+  apt:
+    name: 
+      - php-sqlite3
+      - sqlite3
+    state: present
+
+- name: Create WordPress directory
+  file:
+    path: "{{ wordpress_install_dir }}"
+    state: directory
+    owner: www-data
+    group: www-data
+
+- name: Download WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: "{{ wordpress_install_dir }}"
+    remote_src: yes
+    owner: www-data
+    group: www-data
+
+- name: Configure WordPress for SQLite
+  copy:
+    content: |
+      <?php
+      define('DB_NAME', 'sqlite:{{ wordpress_install_dir }}/wordpress/.ht.sqlite');
+      define('DB_USER', '');
+      define('DB_PASSWORD', '');
+      define('DB_HOST', '');
+      define('DB_CHARSET', 'utf8');
+      define('DB_COLLATE', '');
+      define('WP_HOME', 'http://{{ ansible_host }}');
+      define('WP_SITEURL', 'http://{{ ansible_host }}/wordpress');
+      // ... остальные стандартные настройки ...
+    dest: "{{ wordpress_install_dir }}/wordpress/wp-config.php"
+    owner: www-data
+    group: www-data

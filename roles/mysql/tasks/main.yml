@@ -1,0 +1,65 @@
+---
+- name: Install MariaDB Server
+  apt:
+    name: 
+      - mariadb-server
+      - mariadb-client
+      - python3-pymysql
+    state: present
+  tags: mysql
+
+- name: Ensure MariaDB is running
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Set root password using debian-sys-maint method
+  copy:
+    content: |
+      ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';
+      FLUSH PRIVILEGES;
+    dest: /root/set_root_password.sql
+  no_log: true
+
+- name: Execute password change
+  command: >
+    mysql --defaults-file=/etc/mysql/debian.cnf
+    < /root/set_root_password.sql
+  register: password_change
+  changed_when: "'Query OK' in password_change.stdout"
+  no_log: true
+
+- name: Remove temporary password file
+  file:
+    path: /root/set_root_password.sql
+    state: absent
+
+- name: Secure MariaDB installation
+  command: >
+    mysql -u root -p{{ mysql_root_password }} -e "
+    DELETE FROM mysql.user WHERE User='';
+    DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+    DROP DATABASE IF EXISTS test;
+    DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+    FLUSH PRIVILEGES;"
+  register: secure_result
+  changed_when: "'Query OK' in secure_result.stdout"
+  no_log: true
+
+- name: Create WordPress database
+  community.mysql.mysql_db:
+    name: "{{ mysql_db_name }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create WordPress user
+  community.mysql.mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_db_name }}.*:ALL"
+    host: localhost
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"

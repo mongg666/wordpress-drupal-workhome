@@ -1,0 +1,12 @@
+---
+# MySQL settings
+mysql_root_password: "king_clown666"  # ЗАМЕНИТЕ НА СВОЙ ПАРОЛЬ!
+mysql_db_name: wordpress
+mysql_user: wpuser
+mysql_password: "king_clown666"    # ЗАМЕНИТЕ НА СВОЙ ПАРОЛЬ!
+
+# WordPress settings
+wordpress_install_dir: /var/www/html
+
+# PHP settings
+php_version: "8.2"

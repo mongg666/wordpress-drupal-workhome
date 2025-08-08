@@ -1,0 +1,7 @@
+[webservers]
+192.168.31.34  # Замените на IP вашего сервера
+
+[webservers:vars]
+ansible_user=vboxuser
+ansible_password=king_clown666
+ansible_become_pass=king_clown666

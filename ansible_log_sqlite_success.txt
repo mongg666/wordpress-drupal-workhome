@@ -1,0 +1,52 @@
+
+PLAY [Install WordPress stack] *************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [192.168.31.34]
+
+TASK [apache : Install Apache] *************************************************
+ok: [192.168.31.34]
+
+TASK [apache : Enable Apache modules] ******************************************
+changed: [192.168.31.34] => (item=rewrite)
+changed: [192.168.31.34] => (item=ssl)
+
+TASK [apache : Configure virtual host] *****************************************
+ok: [192.168.31.34]
+
+TASK [apache : Activate site] **************************************************
+changed: [192.168.31.34]
+
+TASK [apache : Disable default site] *******************************************
+changed: [192.168.31.34]
+
+TASK [apache : Start and enable Apache] ****************************************
+ok: [192.168.31.34]
+
+TASK [apache : Enable proxy_fcgi] **********************************************
+changed: [192.168.31.34]
+
+TASK [apache : Start and enable Apache] ****************************************
+ok: [192.168.31.34]
+
+TASK [php : Install PHP and extensions] ****************************************
+changed: [192.168.31.34]
+
+TASK [wordpress : Install SQLite for WordPress] ********************************
+changed: [192.168.31.34]
+
+TASK [wordpress : Create WordPress directory] **********************************
+changed: [192.168.31.34]
+
+TASK [wordpress : Download WordPress] ******************************************
+changed: [192.168.31.34]
+
+TASK [wordpress : Configure WordPress for SQLite] ******************************
+changed: [192.168.31.34]
+
+RUNNING HANDLER [restart apache] ***********************************************
+changed: [192.168.31.34]
+
+PLAY RECAP *********************************************************************
+192.168.31.34              : ok=15   changed=10   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

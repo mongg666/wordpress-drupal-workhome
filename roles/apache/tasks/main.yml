@@ -1,0 +1,43 @@
+---
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
+  tags: apache
+
+- name: Enable Apache modules
+  command: "a2enmod {{ item }}"
+  loop:
+    - rewrite
+    - ssl
+  notify: restart apache
+
+- name: Configure virtual host
+  template:
+    src: wordpress.conf.j2
+    dest: /etc/apache2/sites-available/wordpress.conf
+  notify: restart apache
+
+- name: Activate site
+  command: a2ensite wordpress.conf
+  notify: restart apache
+
+- name: Disable default site
+  command: a2dissite 000-default.conf
+  notify: restart apache
+
+- name: Start and enable Apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Enable proxy_fcgi
+  command: a2enmod proxy_fcgi
+  notify: restart apache
+
+- name: Start and enable Apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes
